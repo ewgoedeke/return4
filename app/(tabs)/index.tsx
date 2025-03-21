@@ -30,7 +30,10 @@ export default function Home() {
   const delegate = Platform.OS === "ios" ? "core-ml" : undefined;
   const rotation = Platform.OS === "ios" ? "0deg" : "270deg";
 
+
   const plugin = useTensorflowModel(require("@/assets/models/yolov5.tflite"), delegate);
+
+
   const model = plugin.model;
 
     
