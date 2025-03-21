@@ -69,10 +69,10 @@ export default function Home() {
       const numAttributes = 85;
       const numDetections = 6300;
 
-      for (let i = 0; i < result.length; i += numAttributes) {
-          reshapedResult.push(result.slice(i, i + numAttributes));
-      }
-      console.log("Reshaped Output:", reshapedResult);
+      // for (let i = 0; i < result.length; i += numAttributes) {
+      //     reshapedResult.push(result.slice(i, i + numAttributes));
+      // }
+      // console.log("Reshaped Output:", reshapedResult);
 
 
 
