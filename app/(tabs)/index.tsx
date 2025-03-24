@@ -141,7 +141,7 @@ export default function Home() {
   const delegate = Platform.OS === "ios" ? "core-ml" : undefined;
   const rotation = Platform.OS === "ios" ? "0deg" : "270deg";
 
-  const plugin = useTensorflowModel(require("@/assets/models/yolov5.tflite"), delegate);
+  const plugin = useTensorflowModel(require("@/assets/models/yolov5s-fp16.tflite"), delegate);
   const model = plugin.model;
 
   const inputTensor = model?.inputs[0];
@@ -154,7 +154,8 @@ export default function Home() {
 
   const handleDetections = Worklets.createRunOnJS((raw: Float32Array) => {
     console.log('✅ Received inference raw result in JS thread:', raw[1]);
-    // const processed = postProcessDetections(raw, 0.4);
+    const processed = postProcessDetections(raw, 0.1);
+    console.log(processed);
     // setDetections(processed);
   });
 
@@ -163,21 +164,30 @@ export default function Home() {
     "worklet";
     if (!model) return;
 
-    runAtTargetFps(0.6, () => {
+    runAtTargetFps(1, () => {
       const resized = resize(frame, {
         scale: { width: inputWidth, height: inputHeight },
         rotation: rotation,
         pixelFormat: "rgb",
-        dataType: "float32",
+        dataType: "uint8",
       }
     );
 
+    console.log(device?.formats)
+
+
+    const start = performance.now();
       const result = model.runSync([resized]);
 
-      console.log(result[0][1])
+      const end = performance.now();
+
+      console.log('time: ',(end - start)*1000);
+
+      // console.log(result[0][1])
 
       // ✅ Don't process here — pass to JS via runOnJS
       if (result?.[0]) {
+        console.log('$$$$$$$: ', result[0].length)
         handleDetections(result[0]); // ✅ clean — no runOnJS needed
       }
     });

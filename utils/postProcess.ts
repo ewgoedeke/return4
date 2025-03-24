@@ -32,6 +32,7 @@ export function postProcessDetections(raw: Float32Array, threshold = 0.4): Detec
     }
 
     const confidence = objectness * maxClassScore;
+
     if (confidence > threshold) {
       results.push({
         x: x_min,
